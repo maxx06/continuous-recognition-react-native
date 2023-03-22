@@ -22,7 +22,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import 'react-native-get-random-values';
 import 'node-libs-react-native/globals';
-import { AudioConfig, AudioInputStream, AudioStreamFormat, CancellationDetails, CancellationReason, NoMatchDetails, NoMatchReason, ResultReason, SpeechConfig, SpeechRecognizer } from 'microsoft-cognitiveservices-speech-sdk';
+import { AudioConfig, AudioInputStream, AudioStreamFormat, CancellationDetails, CancellationReason, NoMatchDetails, NoMatchReason, ResultReason, SpeechConfig, SpeechRecognizer, TranslationRecognizer } from 'microsoft-cognitiveservices-speech-sdk';
 import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 
@@ -44,19 +44,20 @@ export default App = () => {
     pushStream.write(pcmData);
   });
 
-  const speechConfig = SpeechConfig.fromSubscription("--KEY--", "eastus");
-  speechConfig.speechRecognitionLanguage = "en-US";
+  const speechTranslationConfig = SpeechTranslationConfig.fromSubscription("--KEY--", "YourServiceRegion");
+  speechTranslationConfig.speechRecognitionLanguage = "en-US";
+  speechTranslationConfig.addTargetLanguage("en");
   const audioConfig = AudioConfig.fromStreamInput(
     pushStream,
     AudioStreamFormat.getWaveFormatPCM(16000, 16, 1)
   );
-  const recognizer = new SpeechRecognizer(speechConfig, audioConfig);
+  const translationRecognizer = new TranslationRecognizer(speechTranslationConfig, audioConfig);
 
-  recognizer.recognizing = (s, e) => {
+  transalationRecognizer.recognizing = (s, e) => {
     console.log(`RECOGNIZING: Text=${e.result.text}`);
   };
 
-  recognizer.startContinuousRecognitionAsync();
+  translationRecognizer.startContinuousRecognitionAsync();
 
   return <SafeAreaView style={{flexGrow: 1, justifyContent: "center", alignItems: "center"}}>
     
